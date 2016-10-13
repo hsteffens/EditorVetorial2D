@@ -12,6 +12,12 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
+/**
+ * Classe com os facilitadores para manipulação da API OpenGl.
+ * 
+ * @author helinton.steffens
+ *
+ */
 public class OpenGL implements GLEventListener, KeyListener, MouseListener, MouseMotionListener {
 
 	protected GL gl;
