@@ -1,5 +1,6 @@
 package br.furb.gc.trab3.ambiente;
 
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 
 import br.furb.gc.trab3.bo.BOObjetoGrafico;
-import br.furb.gc.trab3.comp.BoundingBox;
 import br.furb.gc.trab3.comp.Camera2D;
 import br.furb.gc.trab3.comp.Ponto4D;
 import br.furb.gc.trab3.objeto.ObjetoGrafico;
@@ -26,11 +26,14 @@ public class Mundo extends OpenGL{
 	private Camera2D camera;
 	private List<ObjetoGrafico> lObjetos = new ArrayList<ObjetoGrafico>();
 	private ObjetoGrafico objetoSelecionado;
-
+	
 	private float[] corFundo = new float[]{1.0f,0.0f,0.0f};
 
 	public Mundo() {
 
+	}
+	public Mundo(Frame frame) {
+		this.setFrame(frame);
 	}
 
 	public Camera2D getCamera() {
@@ -69,7 +72,7 @@ public class Mundo extends OpenGL{
 	public int getYRefereteACamera() {
 		return (int) (getCamera().getyMax() - super.getAntigoY());
 	};
-
+	
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		setMinX(getCamera().getxMin());
@@ -109,7 +112,6 @@ public class Mundo extends OpenGL{
 
 			ponto.atribuirX(getXRefereteACamera());
 			ponto.atribuirY(getYRefereteACamera());
-			getObjetoSelecionado().setBbox(new BoundingBox(ponto.obterX() - 10,ponto.obterY() -10, ponto.obterZ(),ponto.obterX(),ponto.obterY(),ponto.obterZ()));
 		}else{
 			int movtoX = e.getX() - getAntigoX();
 			int movtoY = e.getY() - getAntigoY();
@@ -123,7 +125,6 @@ public class Mundo extends OpenGL{
 
 				ponto.atribuirX(ponto.obterX() + movtoX);
 				ponto.atribuirY(ponto.obterY() - movtoY);
-				objetoGrafico.setBbox(new BoundingBox(ponto.obterX() - 10,ponto.obterY() -10, ponto.obterZ(),ponto.obterX(),ponto.obterY(),ponto.obterZ()));
 			}
 
 		}
@@ -133,17 +134,27 @@ public class Mundo extends OpenGL{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		super.keyPressed(e);
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_A:
-			ObjetoGrafico objetoGrafico = getObjetoSelecionado().adicionaFilho();
-			setObjetoSelecionado(objetoGrafico);
+			if (editingMode) {
+				ObjetoGrafico objetoGrafico = getObjetoSelecionado().adicionaFilho();
+				setObjetoSelecionado(objetoGrafico);
+			}
 			break;
 		case KeyEvent.VK_D:
-			BOObjetoGrafico.removeObjeto(getlObjetos(), getObjetoSelecionado());
-			setObjetoSelecionado(null);
+			if (editingMode) {
+				BOObjetoGrafico.removeObjeto(getlObjetos(), getObjetoSelecionado());
+				setObjetoSelecionado(null);
+			}
 			break;
-		case KeyEvent.VK_SPACE:
-			editingMode = !editingMode;
+		case KeyEvent.VK_X:
+			if (editingMode && getObjetoSelecionado() != null) {
+				Ponto4D pontoSelecionado = getObjetoSelecionado().getVerticeSelecionado();
+				if (pontoSelecionado != null) {
+					getObjetoSelecionado().removerAresta(pontoSelecionado);
+				}
+			}
 			break;
 		case KeyEvent.VK_R:
 			if (!editingMode && objetoSelecionado != null) {
@@ -196,7 +207,6 @@ public class Mundo extends OpenGL{
 
 				Ponto4D ponto4d = new Ponto4D(getXRefereteACamera(), getYRefereteACamera(), 0, 0);
 				objetoGrafico.adicionarAresta(ponto4d);
-				objetoGrafico.setBbox(new BoundingBox(ponto4d.obterX() - 10,ponto4d.obterY() -10, ponto4d.obterZ(),ponto4d.obterX(),ponto4d.obterY(),ponto4d.obterZ()));
 
 				lObjetos.add(objetoGrafico);
 				setObjetoSelecionado(objetoGrafico);
@@ -206,7 +216,6 @@ public class Mundo extends OpenGL{
 				Ponto4D ponto4d = new Ponto4D(getXRefereteACamera(), getYRefereteACamera(), 0, 0);
 
 				getObjetoSelecionado().adicionarAresta(ponto4d);
-				getObjetoSelecionado().setBbox(new BoundingBox(ponto4d.obterX() - 10,ponto4d.obterY() -10, ponto4d.obterZ(),ponto4d.obterX(),ponto4d.obterY(),ponto4d.obterZ()));
 
 			}
 		}else{

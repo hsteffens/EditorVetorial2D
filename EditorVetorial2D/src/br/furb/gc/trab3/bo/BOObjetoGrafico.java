@@ -14,6 +14,11 @@ import br.furb.gc.trab3.objeto.ObjetoGrafico;
  */
 public final class BOObjetoGrafico {
 
+	/**
+	 * Quando clicamos em ponto da tela temos um diferença, entre aonde o usuário clicou do ponto real, está variavel diz o quanto é o aceitavel.
+	 */
+	private final static int MARGEM_CLIQUE_MOUSE = 10;
+	
 	private static ObjetoGrafico objetoGrafico = null;
 	
 	private BOObjetoGrafico(){
@@ -125,7 +130,9 @@ public final class BOObjetoGrafico {
 	private static ObjetoGrafico getObjeto(ObjetoGrafico objetoGrafico, float x, float y){
 		BoundingBox bbox = objetoGrafico.getBbox();
 		if (x < bbox.obterMaiorX() && x > bbox.obterMenorX() && y < bbox.obterMaiorY() && y > bbox.obterMenorY()) {
+			System.out.println("Passou no teste da bbox:" + x + ","+ y);
 			for (Ponto4D ponto : objetoGrafico.getArestas()) {
+				System.out.println("Aresta:" + ponto.obterX() + ","+ ponto.obterY());
 				if (isDentroPoligno(ponto.obterX(), ponto.obterY(), x, y)) {
 					return objetoGrafico;
 				}
@@ -138,7 +145,7 @@ public final class BOObjetoGrafico {
 	private static boolean isDentroPoligno(double ptoX1, double ptoY1, double ptoX2, double ptoY2){
 		double distancia = Math.sqrt(Math.pow(ptoX2 - ptoX1, 2) + Math.pow(ptoY2 - ptoY1, 2));
 
-		return distancia < 20;
+		return distancia < MARGEM_CLIQUE_MOUSE;
 	}
 
 }

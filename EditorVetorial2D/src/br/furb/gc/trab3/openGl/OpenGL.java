@@ -1,5 +1,6 @@
 package br.furb.gc.trab3.openGl;
 
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -23,6 +24,8 @@ public class OpenGL implements GLEventListener, KeyListener, MouseListener, Mous
 	protected GL gl;
 	private GLU glu;
 	protected GLAutoDrawable glDrawable;
+	
+	private Frame frame;
 
 	private float minX;
 	private float maxX;
@@ -145,6 +148,7 @@ public class OpenGL implements GLEventListener, KeyListener, MouseListener, Mous
 	public void setAntigoY(int antigoY) {
 		this.antigoY = antigoY;
 	}
+	
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -193,6 +197,7 @@ public class OpenGL implements GLEventListener, KeyListener, MouseListener, Mous
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_SPACE:
 			this.editingMode = !editingMode;
+			this.getFrame().setTitle("Editing Mode:" + (editingMode ? "On" : "Off"));
 			break;
 		default:
 			break;
@@ -202,6 +207,18 @@ public class OpenGL implements GLEventListener, KeyListener, MouseListener, Mous
 	@Override
 	public void keyReleased(KeyEvent e) {
 
+	}
+
+	public void setEditingMode(boolean editingMode) {
+		this.editingMode = editingMode;
+	}
+
+	public Frame getFrame() {
+		return frame;
+	}
+
+	public void setFrame(Frame frame) {
+		this.frame = frame;
 	}
 
 }

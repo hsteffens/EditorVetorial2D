@@ -127,6 +127,10 @@ public class ObjetoGrafico extends OpenGL {
 		this.arestas.add(ponto);
 	}
 	
+	public void removerAresta(Ponto4D ponto) {
+		this.arestas.remove(ponto);
+	}
+	
 	/**
 	 * Adiciona um {@link ObjetoGrafico} a lista de {@link ObjetoGrafico} com as mesmas caracteristicas do objeto pai.
 	 * 
@@ -224,13 +228,13 @@ public class ObjetoGrafico extends OpenGL {
 	 * Configura o {@link OpenGL} para poder desenhar o objeto atual.
 	 */
 	public void draw(){
-		gl.glLineWidth(3.0f);
-		gl.glPushMatrix();
-		gl.glMultMatrixd(getMatrizObjeto().GetDate(), 0);
+//		gl.glLineWidth(3.0f);
+//		gl.glPushMatrix();
+//		gl.glMultMatrixd(getMatrizObjeto().GetDate(), 0);
 
 		draw(this);
 
-		gl.glPopMatrix();
+//		gl.glPopMatrix();
 	}
 	
 	private void draw(ObjetoGrafico objetoGrafico){
@@ -241,27 +245,36 @@ public class ObjetoGrafico extends OpenGL {
 	}
 
 	private void drawObject(ObjetoGrafico objetoGrafico) {
+		gl.glLineWidth(3.0f);
+		gl.glPushMatrix();
+		gl.glMultMatrixd(getMatrizObjeto().GetDate(), 0);
+		gl.glMultMatrixd(objetoGrafico.getMatrizObjeto().GetDate(), 0);
+
 		objetoGrafico.getGl().glBegin(objetoGrafico.getPrimitiva());
 		objetoGrafico.getGl().glColor3f(objetoGrafico.getCorObjeto()[0], objetoGrafico.getCorObjeto()[1], objetoGrafico.getCorObjeto()[2]);
-
+		objetoGrafico.setBbox(null);
+		
 		for (Ponto4D ponto4d : objetoGrafico.getArestas()) {
+			if (objetoGrafico.getBbox() == null) {
+				objetoGrafico.setBbox(new BoundingBox(ponto4d.obterX() -1, ponto4d.obterY()-1, 0, ponto4d.obterX() + 1, ponto4d.obterY() + 1, 0));
+			}
 			//Trata para quando for o primeiro ponto
 			if (objetoGrafico.getArestas().size() == 1) {
 				int incremento = 1;
 				objetoGrafico.getGl().glVertex2d(ponto4d.obterX() + incremento, ponto4d.obterY() + incremento);
 			}
 			objetoGrafico.getGl().glVertex2d(ponto4d.obterX(), ponto4d.obterY());
+			objetoGrafico.getBbox().atualizarBBox(ponto4d);
 		}
 
-		for (Ponto4D ponto : objetoGrafico.getArestas()) {
-			objetoGrafico.getBbox().atualizarBBox(ponto);
-		}
 		if (objetoGrafico.getBbox() != null) {
 			objetoGrafico.getBbox().processarCentroBBox();
 		}
 		
 		objetoGrafico.getGl().glEnd();
 		objetoGrafico.getGl().glFlush();
+		
+		gl.glPopMatrix();
 	}
 	
 	@Override
